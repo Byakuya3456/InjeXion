@@ -83,8 +83,6 @@ Contributing
 - **Bimalvray**: Provided feedback and suggested improvements.
 
 Contributions are welcome! Feel free to fork the repository and submit pull requests for new features, bug fixes, or improvements.
-
-
 License
 -------
 This project is licensed under the MIT License with Credit Restriction. See the LICENSE file for details.
