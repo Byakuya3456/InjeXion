@@ -41,21 +41,39 @@
 ## 📦 Installation
 
 ### Prerequisites
-- Python 3.9 or higher
-- `pip`
+- Python 3.9+ or [`uv`](https://docs.astral.sh/uv/)
 
-### Standard Installation (Windows & Linux)
+### ⚡ Method 1: Using `uv` (Recommended — Ultra Fast)
+If you have [uv](https://docs.astral.sh/uv/) installed, setup takes seconds with no manual virtual environment configuration:
 ```bash
-git clone https://github.com/your-username/injexion.git
-cd injexion
+git clone https://github.com/Byakuya3456/web-application-payloads-injector-penln2.git
+cd web-application-payloads-injector-penln2
+
+# Synchronize dependencies and virtual environment
+uv sync
+
+# Run InjeXion commands directly:
+uv run injx --help
+uv run injx doctor
+uv run injx scan "http://testphp.vulnweb.com/listproducts.php?cat=1"
+
+# Or run interactive launchers:
+uv run python launcher_windows.py   # Windows
+uv run python launcher_termux.py    # Linux / Termux
+```
+
+### 🐍 Method 2: Standard pip Installation (Windows & Linux)
+```bash
+git clone https://github.com/Byakuya3456/web-application-payloads-injector-penln2.git
+cd web-application-payloads-injector-penln2
 pip install -e .
 ```
-Or simply install requirements:
+Or install dependencies directly:
 ```bash
 pip install -r requirements.txt
 ```
 
-### Android (Termux) Installation
+### 📱 Method 3: Android (Termux) Installation
 ```bash
 pkg update && pkg install python
 cd web-application-payloads-injector-penln2
