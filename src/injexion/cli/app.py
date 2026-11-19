@@ -8,6 +8,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 import time
 from typing import List, Optional
+try:
+    from typing import Annotated
+except ImportError:
+    from typing_extensions import Annotated
 import urllib.parse
 import typer
 
@@ -66,17 +70,17 @@ def _save_reports(
 
 @app.command()
 def scan(
-    url: str = typer.Argument(..., help="Target URL (e.g. http://example.com/item.php?id=1)"),
-    profile: str = typer.Option("desktop", "--profile", "-p", help="Performance profile: 'desktop' or 'mobile' (Termux)"),
-    concurrency: Optional[int] = typer.Option(None, "--concurrency", "-c", help="Max concurrent connections"),
-    rate_limit: Optional[float] = typer.Option(None, "--rate-limit", "-r", help="Max requests per second"),
-    timeout: Optional[float] = typer.Option(None, "--timeout", "-t", help="HTTP timeout in seconds"),
-    proxy: Optional[str] = typer.Option(None, "--proxy", help="Upstream HTTP/SOCKS proxy"),
-    formats: str = typer.Option("console,html,json", "--format", "-f", help="Output formats: console,html,json,sarif"),
-    output_dir: Path = typer.Option(Path("reports"), "--output-dir", "-o", help="Report output directory"),
-    scan_ports: bool = typer.Option(False, "--ports", help="Also scan common open ports"),
-    scan_dirs: bool = typer.Option(True, "--dirs", help="Scan for sensitive directories/files"),
-    no_banner: bool = typer.Option(False, "--no-banner", help="Suppress ASCII banner"),
+    url: Annotated[str, typer.Argument(help="Target URL (e.g. http://example.com/item.php?id=1)")],
+    profile: Annotated[str, typer.Option("--profile", "-p", help="Performance profile: 'desktop' or 'mobile' (Termux)")] = "desktop",
+    concurrency: Annotated[Optional[int], typer.Option("--concurrency", "-c", help="Max concurrent connections")] = None,
+    rate_limit: Annotated[Optional[float], typer.Option("--rate-limit", "-r", help="Max requests per second")] = None,
+    timeout: Annotated[Optional[float], typer.Option("--timeout", "-t", help="HTTP timeout in seconds")] = None,
+    proxy: Annotated[Optional[str], typer.Option("--proxy", help="Upstream HTTP/SOCKS proxy")] = None,
+    formats: Annotated[str, typer.Option("--format", "-f", help="Output formats: console,html,json,sarif")] = "console,html,json",
+    output_dir: Annotated[Path, typer.Option("--output-dir", "-o", help="Report output directory")] = Path("reports"),
+    scan_ports: Annotated[bool, typer.Option("--ports", help="Also scan common open ports")] = False,
+    scan_dirs: Annotated[bool, typer.Option("--dirs", help="Scan for sensitive directories/files")] = True,
+    no_banner: Annotated[bool, typer.Option("--no-banner", help="Suppress ASCII banner")] = False,
 ):
     """Run a full, comprehensive vulnerability audit on target."""
     if not no_banner:
@@ -179,8 +183,8 @@ def scan(
 
 @app.command()
 def sqli(
-    url: str = typer.Argument(..., help="Target URL with query parameters"),
-    profile: str = typer.Option("desktop", "--profile", "-p"),
+    url: Annotated[str, typer.Argument(help="Target URL with query parameters")],
+    profile: Annotated[str, typer.Option("--profile", "-p")] = "desktop",
 ):
     """Run dedicated SQL injection scanner."""
     config = ScanConfig.create_for_profile(profile)
@@ -201,8 +205,8 @@ def sqli(
 
 @app.command()
 def xss(
-    url: str = typer.Argument(..., help="Target URL with query parameters"),
-    profile: str = typer.Option("desktop", "--profile", "-p"),
+    url: Annotated[str, typer.Argument(help="Target URL with query parameters")],
+    profile: Annotated[str, typer.Option("--profile", "-p")] = "desktop",
 ):
     """Run dedicated XSS reflection & breakout scanner."""
     config = ScanConfig.create_for_profile(profile)
@@ -223,8 +227,8 @@ def xss(
 
 @app.command()
 def lfi(
-    url: str = typer.Argument(..., help="Target URL with file parameter"),
-    profile: str = typer.Option("desktop", "--profile", "-p"),
+    url: Annotated[str, typer.Argument(help="Target URL with file parameter")],
+    profile: Annotated[str, typer.Option("--profile", "-p")] = "desktop",
 ):
     """Run dedicated Local File Inclusion scanner."""
     config = ScanConfig.create_for_profile(profile)
@@ -245,15 +249,22 @@ def lfi(
 
 @app.command()
 def ports(
-    host: str = typer.Argument(..., help="Target hostname or IP address"),
-    timeout: float = typer.Option(2.0, "--timeout", "-t"),
-    concurrency: int = typer.Option(30, "--concurrency", "-c"),
+    host: Annotated[str, typer.Argument(help="Target hostname or IP address")],
+    timeout: Annotated[float, typer.Option("--timeout", "-t")] = 2.0,
+    concurrency: Annotated[int, typer.Option("--concurrency", "-c")] = 30,
 ):
     """Run fast asynchronous TCP port prober."""
+    # Sanitize host if user provided a URL scheme or path
+    target_host = host
+    if "://" in host:
+        target_host = urllib.parse.urlparse(host).hostname or host
+    elif "/" in host:
+        target_host = host.split("/")[0]
+
     scanner = AsyncPortScanner(timeout=timeout, concurrency=concurrency)
     async def _runner():
-        console.print(f"[bold cyan]🔍 Scanning ports on:[/bold cyan] {host}")
-        results = await scanner.scan(host)
+        console.print(f"[bold cyan]🔍 Scanning ports on:[/bold cyan] {target_host}")
+        results = await scanner.scan(target_host)
         if not results:
             console.print("[yellow]No open common ports detected.[/yellow]")
         for r in results:
