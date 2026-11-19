@@ -46,8 +46,8 @@
 ### ⚡ Method 1: Using `uv` (Recommended — Ultra Fast)
 If you have [uv](https://docs.astral.sh/uv/) installed, setup takes seconds with no manual virtual environment configuration:
 ```bash
-git clone https://github.com/Byakuya3456/web-application-payloads-injector-penln2.git
-cd web-application-payloads-injector-penln2
+git clone https://github.com/Byakuya3456/InjeXion.git
+cd InjeXion
 
 # Synchronize dependencies and virtual environment
 uv sync
@@ -64,8 +64,8 @@ uv run python launcher_termux.py    # Linux / Termux
 
 ### 🐍 Method 2: Standard pip Installation (Windows & Linux)
 ```bash
-git clone https://github.com/Byakuya3456/web-application-payloads-injector-penln2.git
-cd web-application-payloads-injector-penln2
+git clone https://github.com/Byakuya3456/InjeXion.git
+cd InjeXion
 pip install -e .
 ```
 Or install dependencies directly:
@@ -76,7 +76,7 @@ pip install -r requirements.txt
 ### 📱 Method 3: Android (Termux) Installation
 ```bash
 pkg update && pkg install python
-cd web-application-payloads-injector-penln2
+cd InjeXion
 pip install -r requirements.txt
 ```
 
