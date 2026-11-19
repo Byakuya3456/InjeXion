@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src
 try:
     from injexion.cli.legacy import main
     if __name__ == "__main__":
-        main()
+        main(default_profile="desktop")
 except ImportError:
     print("[!] InjeXion dependencies missing. Please run:")
     print("    pip install -r requirements.txt")
