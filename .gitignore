@@ -46,11 +46,13 @@ Thumbs.db
 *.rar
 *.7z
 
-# Payload and wordlist directories
-xss_payloads/
-sqlpayloads/
-lfi_payloads/
-wordlists/
+# Build & distribution
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+reports/
+.agents/
 
 # Other files
 *.sqlite3
